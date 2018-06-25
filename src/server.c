@@ -228,7 +228,11 @@ void get_root(int fd)
  */
 void get_d20(int fd)
 {
-  // !!!! IMPLEMENT ME
+  srand(time(NULL));
+  int n = (rand() % 21) + 1;
+  char buffer[2];
+  snprintf(buffer, 10, "%d", n);
+  send_response(fd, "HTTP/1.1 200 SUCCESS", "test/plain", buffer);
 }
 
 /**
@@ -288,7 +292,7 @@ void handle_http_request(int fd)
   // !!!! IMPLEMENT ME
   // Get the request type and path from the first line
   // Hint: sscanf()!
-  sscanf(request, "%s %s %s %s", &request_type, &request_path, &request_protocol);
+  sscanf(request, "%s %s %s", &request_type, &request_path, &request_protocol);
 
   // !!!! IMPLEMENT ME (stretch goal)
   // find_start_of_body()
