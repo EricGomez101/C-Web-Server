@@ -192,10 +192,11 @@ int send_response(int fd, char *header, char *content_type, char *body)
   int response_length; // Total length of header plus body
 
   // !!!!  IMPLEMENT ME
-
+  sprintf(response, "%s\n%s\n\n%s\n", header, content_type, body);
+  response_length = strlen(header) + strlen(content_type) + strlen(body) + 4;
   // Send it all!
   int rv = send(fd, response, response_length, 0);
-
+ 
   if (rv < 0) {
     perror("send");
   }
@@ -219,6 +220,7 @@ void get_root(int fd)
 {
   // !!!! IMPLEMENT ME
   //send_response(...
+  send_response(fd, "HTTP/1.1 200 SUCCESS", "text/plain", "hello world!");
 }
 
 /**
@@ -272,7 +274,6 @@ void handle_http_request(int fd)
   char request_type[8]; // GET or POST
   char request_path[1024]; // /info etc.
   char request_protocol[128]; // HTTP/1.1
-
   // Read request
   int bytes_recvd = recv(fd, request, request_buffer_size - 1, 0);
 
@@ -287,12 +288,26 @@ void handle_http_request(int fd)
   // !!!! IMPLEMENT ME
   // Get the request type and path from the first line
   // Hint: sscanf()!
+  sscanf(request, "%s %s %s %s", &request_type, &request_path, &request_protocol);
 
   // !!!! IMPLEMENT ME (stretch goal)
   // find_start_of_body()
 
   // !!!! IMPLEMENT ME
   // call the appropriate handler functions, above, with the incoming data
+
+  if (strcmp(request_type, "GET") == 0 && strcmp(request_path, "/") == 0)
+  {
+    get_root(fd);
+  }
+  else if (strcmp(request_type, "GET") == 0 && strcmp(request_path, "/d20") == 0)
+  {
+    get_d20(fd);
+  }
+  else
+  {
+    resp_404(fd);
+  }
 }
 
 /**
