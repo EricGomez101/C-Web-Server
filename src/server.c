@@ -228,19 +228,23 @@ void get_root(int fd)
  */
 void get_d20(int fd)
 {
+  char buffer[2];
   srand(time(NULL));
   int n = (rand() % 21) + 1;
-  char buffer[2];
   snprintf(buffer, 10, "%d", n);
-  send_response(fd, "HTTP/1.1 200 SUCCESS", "test/plain", buffer);
+  send_response(fd, "HTTP/1.1 200 SUCCESS", "text/plain", buffer);
 }
 
 /**
  * Send a /date endpoint response
  */
+
 void get_date(int fd)
 {
-  // !!!! IMPLEMENT ME
+  time_t t = time(NULL);
+  struct tm *tm = gmtime(&t);
+  send_response(fd, "HTTP/1.1 200 SUCCESS", "text/plain", asctime(tm));
+
 }
 
 /**
@@ -265,6 +269,7 @@ void post_save(int fd, char *body)
 char *find_start_of_body(char *header)
 {
   // !!!! IMPLEMENT ME
+  printf("header: %s\n", *header);
 }
 
 /**
@@ -307,6 +312,10 @@ void handle_http_request(int fd)
   else if (strcmp(request_type, "GET") == 0 && strcmp(request_path, "/d20") == 0)
   {
     get_d20(fd);
+  }
+  else if (strcmp(request_type, "GET") == 0 && strcmp(request_path, "/date") == 0)
+  {
+    get_date(fd);
   }
   else
   {
